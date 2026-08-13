@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meretes Erindringer · 1949–1973</title>
+<meta name="description" content="Merete Møller Christensens erindringer — barndom og ungdom, 1949–1973. En interaktiv udgave med billeder.">
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+  <div class="bar">
+    <button class="iconbtn menu-toggle" id="menuToggle" aria-label="Vis indhold" title="Indhold">☰</button>
+    <div class="brand">
+      <span class="brand__name" id="brandName">Meretes Erindringer</span>
+      <span class="brand__years" id="brandYears">1949–1973</span>
+    </div>
+    <div class="books" id="bookTabs" role="tablist" aria-label="Bøger"></div>
+    <div class="tools">
+      <label class="search">
+        <span class="search__icon" aria-hidden="true">⌕</span>
+        <input id="search" type="search" placeholder="Søg i teksten…" aria-label="Søg i teksten"
+               autocomplete="off" spellcheck="false">
+      </label>
+      <span class="search__count" id="searchCount" aria-live="polite"></span>
+      <div class="type-ctrl">
+        <button class="iconbtn iconbtn--sm" id="typeMinus" aria-label="Mindre skrift" title="Mindre skrift">A−</button>
+        <button class="iconbtn" id="typePlus" aria-label="Større skrift" title="Større skrift">A+</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="reader">
+  <aside class="toc" id="toc" aria-label="Indholdsfortegnelse">
+    <p class="toc__title">Indhold</p>
+    <nav id="tocList"></nav>
+  </aside>
+  <div class="content" id="content"></div>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<button class="totop" id="totop" aria-label="Til toppen" title="Til toppen">↑</button>
+
+<div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Foto">
+  <button class="lightbox__x" id="lbClose" aria-label="Luk">✕</button>
+  <button class="lightbox__nav lightbox__nav--prev" id="lbPrev" aria-label="Forrige">‹</button>
+  <figure class="lightbox__fig">
+    <img class="lightbox__img" id="lbImg" src="" alt="">
+    <figcaption class="lightbox__cap" id="lbCap"></figcaption>
+  </figure>
+  <button class="lightbox__nav lightbox__nav--next" id="lbNext" aria-label="Næste">›</button>
+  <div class="lightbox__counter" id="lbCounter"></div>
+</div>
+
+<script src="assets/data/book1.js"></script>
+<!-- Bog 2 og 3 tilføjes senere:  <script src="assets/data/book2.js"></script>  osv. -->
+<script src="assets/js/app.js"></script>
+</body>
+</html>
