@@ -18,24 +18,28 @@
       <span class="brand__name" id="brandName">Meretes Erindringer</span>
       <span class="brand__years" id="brandYears">1949–1973</span>
     </div>
-    <div class="books" id="bookTabs" role="tablist" aria-label="Bøger"></div>
-    <div class="tools">
-      <label class="search">
-        <span class="search__icon" aria-hidden="true">⌕</span>
-        <input id="search" type="search" placeholder="Søg i teksten…" aria-label="Søg i teksten"
-               autocomplete="off" spellcheck="false">
-      </label>
-      <span class="search__count" id="searchCount" aria-live="polite"></span>
-      <div class="type-ctrl">
-        <button class="iconbtn iconbtn--sm" id="typeMinus" aria-label="Mindre skrift" title="Mindre skrift">A−</button>
-        <button class="iconbtn" id="typePlus" aria-label="Større skrift" title="Større skrift">A+</button>
-      </div>
+    <div class="tools" id="slotTop">
+      <div class="slot-books" id="slotTopBooks"></div>
+      <div class="slot-type" id="slotTopType"></div>
     </div>
   </div>
 </header>
 
 <main class="reader">
-  <aside class="toc" id="toc" aria-label="Indholdsfortegnelse">
+  <aside class="toc" id="toc" aria-label="Indhold og indstillinger">
+    <div class="drawer-tools" id="slotDrawer">
+      <p class="drawer-lbl">Bog</p>
+      <div class="slot-books" id="slotBooks">
+        <div class="books" id="bookTabs" role="tablist" aria-label="Bøger"></div>
+      </div>
+      <p class="drawer-lbl">Skriftstørrelse</p>
+      <div class="slot-type" id="slotType">
+        <div class="type-ctrl" id="typeCtrl">
+          <button class="iconbtn iconbtn--sm" id="typeMinus" aria-label="Mindre skrift" title="Mindre skrift">A−</button>
+          <button class="iconbtn" id="typePlus" aria-label="Større skrift" title="Større skrift">A+</button>
+        </div>
+      </div>
+    </div>
     <p class="toc__title">Indhold</p>
     <nav id="tocList"></nav>
   </aside>
@@ -55,6 +59,13 @@
   <button class="lightbox__nav lightbox__nav--next" id="lbNext" aria-label="Næste">›</button>
   <div class="lightbox__counter" id="lbCounter"></div>
 </div>
+
+<!-- Firebase (login + bogmærker). Hentes online; ved offline springes de bare over. -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="assets/js/firebase-config.js"></script>
+<script src="assets/js/auth.js"></script>
 
 <script src="assets/data/book1.js"></script>
 <!-- Bog 2 og 3 tilføjes senere:  <script src="assets/data/book2.js"></script>  osv. -->
