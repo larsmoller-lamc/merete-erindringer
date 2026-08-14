@@ -9,10 +9,12 @@
    ============================================================ */
 
 window.FIREBASE_CONFIG = {
-  apiKey:            "DIN_API_KEY",
-  authDomain:        "DIT-PROJEKT.firebaseapp.com",
-  projectId:         "DIT-PROJEKT-ID",
-  appId:             "DIT_APP_ID"
+  apiKey: "AIzaSyBNCN34zi99PNppcdQCUislZu7dEUJ4jOI",
+  authDomain: "merete-erindringer.firebaseapp.com",
+  projectId: "merete-erindringer",
+  storageBucket: "merete-erindringer.firebasestorage.app",
+  messagingSenderId: "542959564969",
+  appId: "1:542959564969:web:5382796a298c48c73551b8"
   // storageBucket og messagingSenderId er valgfrie for login+Firestore
 };
 
