@@ -296,6 +296,8 @@
       if(b.type==='para'){
         var ev=parseEvents(b.text);
         if(ev){ wrap.appendChild(renderEvents(ev)); i++; continue; }
+        var bul=parseBullets(b.text);
+        if(bul){ wrap.appendChild(renderBullets(bul)); i++; continue; }
         wrap.appendChild(el('p',null,esc(b.text))); i++; continue;
       }
       i++;
@@ -361,8 +363,36 @@
       '.events__text{font-family:var(--body);color:var(--text);line-height:1.6}'+
       '.events__closing{max-width:var(--maxread);margin:1.4rem 0 .4rem;font-style:italic;color:var(--navy)}'+
       '.events__foot{max-width:var(--maxread);margin:.4rem 0;padding-left:1.1rem;border-left:2px solid var(--mist-2);font-size:.92rem;color:var(--muted)}'+
+      '.events--bul .events__item{grid-template-columns:1fr}'+
       '@media (max-width:560px){.events__item{grid-template-columns:1fr;gap:.1rem}.events__date{padding-top:0}}';
     var st=document.createElement('style'); st.id='events-css'; st.textContent=css; document.head.appendChild(st);
+  }
+
+  /* ---------- punkt-tidslinje (Historiske begivenheder, Bog 2) ---------- */
+  function parseBullets(text){
+    var parts=null;
+    if((text.match(/•/g)||[]).length >= 6){
+      parts=text.split(/\s*•\s*/);
+    } else if((text.match(/\s[–-]\s/g)||[]).length >= 6){
+      // dash-separated event list (e.g. 1990'erne). Gate on short, list-like segments.
+      var cand=text.replace(/^[\s]*[–-]\s+/,'').split(/\s+[–-]\s+/);
+      var lens=cand.map(function(s){return s.trim().length;});
+      var maxlen=Math.max.apply(null, lens);
+      if(cand.length>=6 && maxlen<300) parts=cand;
+    }
+    if(!parts) return null;
+    parts=parts.map(function(s){return s.trim();}).filter(function(s){return s.length>1;});
+    return parts.length>=6 ? parts : null;
+  }
+  function renderBullets(items){
+    injectEventsCSS();
+    var ul=el('ul','events events--bul');
+    items.forEach(function(t){
+      var li=el('li','events__item');
+      li.appendChild(el('span','events__text',esc(t)));
+      ul.appendChild(li);
+    });
+    return ul;
   }
 
   /* ---------- fotos ---------- */
