@@ -51,30 +51,36 @@ mappen til f.eks. GitHub Pages, Netlify, eller et almindeligt webhotel.
 Der skal ikke installeres noget.
 
 
-SÅDAN TILFØJES BOG 2 OG 3 SENERE
---------------------------------
-Strukturen er allerede klar til tre bøger (fanerne "Bog 2" og "Bog 3"
-øverst står og venter).
+BOG 2 ER NU MED · SÅDAN TILFØJES BOG 3 SENERE
+---------------------------------------------
+Bog 2 ("Meretes videre erindringer", 1973–1998) er nu aktiv. Den har tre
+dele — 1970’erne, 1980’erne og 1990’erne — og alle bogens 272 fotos.
+Fanen "Bog 3" står stadig og venter.
 
-Når teksten og billederne til en ny bog er behandlet på samme måde som
-Bog 1, gøres to ting:
+Bog 2's billeder ligger i deres egen mappe:  assets/images-bog2/
+(Bog 1's ligger fortsat i assets/images/). De blandes altså ikke sammen.
 
-1) Læg en ny datafil i  assets/data/  — f.eks.  book2.js
-   (samme opbygning som book1.js: window.BOOKS['2'] = { ... }).
+Bemærk: Bog 2's fysiske forside var en collage af 13 portrætter. De
+enkelte portrætter findes ikke som separate filer i PDF'en, så Bog 2
+har ikke en portrætvæg på forsiden som Bog 1. Har du portrætterne som
+løse billeder, kan de nemt lægges ind (der er en billedtekst-liste til
+alle 13 i bogen).
 
-2) Åbn index.html i en teksteditor og tilføj én linje ved de andre
-   <script>-linjer nederst:
+Når Bog 3 er klar, gøres to ting (samme fremgangsmåde som Bog 2):
 
-       <script src="assets/data/book1.js"></script>
-       <script src="assets/data/book2.js"></script>   <-- ny linje
+1) Læg datafilen  assets/data/book3.js  (samme opbygning:
+   window.BOOKS['3'] = { ... }) og billederne i en ny mappe.
+
+2) Tilføj én linje i index.html ved de andre <script>-linjer nederst:
+
+       <script src="assets/data/book2.js"></script>
+       <script src="assets/data/book3.js"></script>   <-- ny linje
        <script src="assets/js/app.js"></script>
 
-   Så aktiverer fanen "Bog 2" sig selv.
+   Så aktiverer fanen "Bog 3" sig selv.
 
 Om "dele": hver del er simpelthen én sektion i datafilen (nøglen
-"sections"). Siden laver automatisk én side pr. sektion. Så en bog med
-tre dele har blot tre sektioner. De planlagte opdelinger er:
-  • Bog 2 → 3 dele
+"sections"). Siden laver automatisk én side pr. sektion.
   • Bog 3 → 3 dele: (1) frem til USA-turen med Anna-Lise og Tage i 2004,
     (2) derfra frem til "Sådan fejrer vi jul", (3) resten.
 Bog 3 har desuden nogle ekstra billeder, der lægges ind samme sted.
