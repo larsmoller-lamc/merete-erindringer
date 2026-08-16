@@ -66,6 +66,12 @@
     if (!backend.allowed) return Promise.reject(new Error('ikke logget ind'));
     return ref(ctx).delete();
   };
+  backend.listAll = function () {
+    if (!backend.allowed) return Promise.resolve([]);
+    return db.collection('bookmarks').where('uid', '==', backend.user.uid).get()
+      .then(function (qs) { var out = []; qs.forEach(function (d) { out.push(d.data()); }); return out; })
+      .catch(function () { return []; });
+  };
 
   function signIn() {
     var p = new firebase.auth.GoogleAuthProvider();
