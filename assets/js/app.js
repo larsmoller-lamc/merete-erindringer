@@ -336,7 +336,7 @@
       img.addEventListener('click', function(){ openLightboxSrc(src, ''); });
       fig.appendChild(img); grid.appendChild(fig);
     });
-    grid.appendChild(el('div','portraits__cap','Merete gennem barndom og ungdom'));
+    grid.appendChild(el('div','portraits__cap', data.portraitsCap || 'Merete gennem barndom og ungdom'));
     right.appendChild(grid);
     inner.appendChild(left); inner.appendChild(right);
     cov.appendChild(inner);
