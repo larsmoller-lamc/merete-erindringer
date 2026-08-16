@@ -24,7 +24,7 @@
     bmFab: null
   };
 
-  var state = { book: '1', page: 0, pages: [], figures: [], lbIndex: 0, spy: null, bookmark: null };
+  var state = { book: '1', page: 0, pages: [], figures: [], lbIndex: 0, spy: null, bookmark: null, allBookmarks: [] };
 
   /* ---------- helpers ---------- */
   function safeLS(){ try{ var k='__t';localStorage.setItem(k,'1');localStorage.removeItem(k);return localStorage; }catch(e){ return null; } }
@@ -144,11 +144,11 @@
       chapterId: ch?ch.id:'',
       chapterTitle: ch? (ch.querySelector('h3')?ch.querySelector('h3').textContent:'') : ''
     };
-    window.MemoirBackend.save(getCtx(), data).then(refreshBookmark).catch(function(){});
+    window.MemoirBackend.save(getCtx(), data).then(function(){ refreshBookmark(); refreshBmPanel(); }).catch(function(){});
   }
   function clearBookmark(){
     if(!bmReady()) return;
-    window.MemoirBackend.remove(getCtx()).then(refreshBookmark).catch(function(){});
+    window.MemoirBackend.remove(getCtx()).then(function(){ refreshBookmark(); refreshBmPanel(); }).catch(function(){});
   }
   function removeMarkerUI(){
     els.content.querySelectorAll('.bm-tag').forEach(function(n){ n.remove(); });
@@ -216,6 +216,73 @@
     window.MemoirBackend.load(ctx).then(function(bm){
       if(getCtx() && getCtx().page===ctx.page) renderBookmark(bm);
     }).catch(function(){ renderBookmark(null); });
+  }
+
+  /* ---------- oversigt over markeringer ---------- */
+  function buildBmPanel(){
+    if(els.bmPanel) return;
+    var toc=document.getElementById('toc'); if(!toc) return;
+    var panel=el('section','bmpanel'); panel.id='bmPanel'; panel.hidden=true;
+    panel.innerHTML=
+      '<button class="bmpanel__hd" id="bmPanelHd" aria-expanded="false">'+
+        '<span class="bmpanel__t">Mine markeringer</span>'+
+        '<span class="bmpanel__n" id="bmPanelN"></span>'+
+        '<span class="bmpanel__chev" aria-hidden="true">▾</span>'+
+      '</button>'+
+      '<div class="bmpanel__list" id="bmPanelList" hidden></div>';
+    var title=toc.querySelector('.toc__title');
+    if(title) toc.insertBefore(panel, title); else toc.appendChild(panel);
+    els.bmPanel=panel;
+    panel.querySelector('#bmPanelHd').addEventListener('click', function(){
+      var list=document.getElementById('bmPanelList');
+      var willOpen=list.hidden; list.hidden=!willOpen;
+      this.setAttribute('aria-expanded', willOpen?'true':'false');
+      panel.classList.toggle('open', willOpen);
+    });
+  }
+  function refreshBmPanel(){
+    buildBmPanel();
+    var ok = document.body.classList.contains('is-authed') && window.MemoirBackend && window.MemoirBackend.allowed && window.MemoirBackend.listAll;
+    if(!ok){ if(els.bmPanel) els.bmPanel.hidden=true; return; }
+    window.MemoirBackend.listAll().then(function(list){
+      state.allBookmarks=list||[]; renderBmPanel();
+    }).catch(function(){ state.allBookmarks=[]; renderBmPanel(); });
+  }
+  function partTitleOf(book, pageId){
+    var data=window.BOOKS&&window.BOOKS[book]; if(!data) return '';
+    var sid=String(pageId||'').replace(/^sek-/,'');
+    for(var i=0;i<data.sections.length;i++) if(data.sections[i].id===sid) return data.sections[i].title;
+    return '';
+  }
+  function renderBmPanel(){
+    if(!els.bmPanel) return;
+    var list=(state.allBookmarks||[]).slice().sort(function(a,b){ return (b.atClient||0)-(a.atClient||0); });
+    els.bmPanel.hidden = list.length===0;
+    var n=document.getElementById('bmPanelN'); if(n) n.textContent = list.length?String(list.length):'';
+    var box=document.getElementById('bmPanelList'); if(!box) return; box.innerHTML='';
+    list.forEach(function(bm){
+      var it=el('button','bmpanel__item');
+      var part=partTitleOf(bm.book, bm.page);
+      it.innerHTML=
+        '<span class="bmpanel__meta">Bog '+esc(bm.book)+(part?' · '+esc(part):'')+'</span>'+
+        (bm.chapterTitle?'<span class="bmpanel__ch">'+esc(bm.chapterTitle)+'</span>':'')+
+        '<span class="bmpanel__date">❦ '+esc(fmtDate(bm))+'</span>'+
+        (bm.snippet?'<span class="bmpanel__snip">'+esc(bm.snippet)+'…</span>':'');
+      it.addEventListener('click', function(){ gotoBookmark(bm); });
+      box.appendChild(it);
+    });
+  }
+  function gotoBookmark(bm){
+    if(state.book!==bm.book) selectBook(bm.book);
+    var idx=-1;
+    for(var i=0;i<state.pages.length;i++){ if(state.pages[i].id===bm.page){ idx=i; break; } }
+    if(idx<0) idx=0;
+    showPage(idx);
+    setTimeout(function(){
+      var p=findBookmarkP(bm);
+      if(p) p.scrollIntoView({behavior:prefersReduced()?'auto':'smooth', block:'center'});
+    }, 70);
+    closeDrawer();
   }
 
   function partMeta(page){
@@ -407,10 +474,10 @@
   function renderFigures(run){
     run = run.filter(function(f){return f.file;});
     if(run.length===0) return document.createComment('no-img');
-    if(run.length===1) return figureNode(run[0], false);
-    var row = el('div','photo-row'+(run.length>=3?' n3':''));
-    run.forEach(function(f){ row.appendChild(figureNode(f,false)); });
-    return row;
+    // Full-width, stacked (one under another) — no grid.
+    var frag=document.createDocumentFragment();
+    run.forEach(function(f){ frag.appendChild(figureNode(f,false)); });
+    return frag;
   }
 
   /* ---------- placeholder-bøger ---------- */
@@ -595,8 +662,9 @@
     els.bmFab.setAttribute('aria-label','Sæt læsemarkering her');
     els.bmFab.addEventListener('click', setBookmarkHere);
     document.body.appendChild(els.bmFab);
+    buildBmPanel();
     if(window.MemoirBackend && typeof window.MemoirBackend.subscribe==='function'){
-      window.MemoirBackend.subscribe(function(){ refreshBookmark(); });
+      window.MemoirBackend.subscribe(function(){ refreshBookmark(); refreshBmPanel(); });
     }
 
     selectBook('1');
